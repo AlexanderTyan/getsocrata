@@ -160,7 +160,7 @@ def build_url_and_query_string(getsocrata_options):
     return generated_url
 
 
-def increment_offset_and_record_data_until_empty():
+def increment_offset_and_record_data_until_empty(control_iterative_function, control_ending_function):
     """ This control loop iteratively pulls data until it runs out
     
     """
@@ -180,16 +180,30 @@ def increment_offset_and_record_data_until_empty():
         if next_page == None:
             continue
         
-        # write_socrata_page_to_file(getsocrata_options['output_file'], next_page)
-        store_socrata_page_in_global_list(next_page)
-
+        control_iterative_function(getsocrata_options['output_file'], next_page)
     else:
 
-        ## Temporary location for pickle logic.
-        with open(getsocrata_options['output_file']+".pickle", "w+") as f:
-            pickle.dump(gl_total_list, f)
-        ## Temporary location for pickle logic.
+        control_ending_function(getsocrata_options['output_file'], next_page)
 
+
+
+def pass_function(*args):
+    """ Generic passing function
+
+    """
+
+    pass
+
+
+def dump_listofdicts_to_pickle(output_file, socrata_page):
+    """ One of a selection of functions designed to finish storing data.
+
+    """
+
+    ## Temporary location for pickle logic.
+    with open(output_file+".pickle", "w+") as f:
+        pickle.dump(gl_total_list, f)
+    ## Temporary location for pickle logic.
 
 
 def write_socrata_page_to_file(output_file, socrata_page):
@@ -203,7 +217,7 @@ def write_socrata_page_to_file(output_file, socrata_page):
             f.write(json.dumps(each) + os.linesep)
 
 
-def store_socrata_page_in_global_list(socrata_page):
+def store_socrata_page_in_global_list(output_file, socrata_page):
     """ One of a selection of functions to store the retrieved data.
 
     """
@@ -279,6 +293,6 @@ if __name__ == '__main__':
 
 
     # Control logic for __main__:
-    increment_offset_and_record_data_until_empty()
+    increment_offset_and_record_data_until_empty(store_socrata_page_in_global_list, dump_listofdicts_to_pickle)
     
 
