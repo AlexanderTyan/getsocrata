@@ -8,7 +8,7 @@ Python 3 support is expected in the future but not begun.
 Getting Started:
 ------
 
-getsocrata currently only supports Python 2 in a linux environment.  
+getsocrata was written in Python 2 and will need some tweaks to be run in python3.  
 
 
 1. Get the socrata json endpoint for your data. This is a URL (ex - http://data.sfgov.org/resource/7h4w-reyq.json)    
