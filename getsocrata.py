@@ -22,9 +22,12 @@ import datetime
 import urllib
 import traceback
 
+import pickle
 
 http_request_history = {}
 getsocrata_options = {}
+
+gl_total_list = []
 
 
 def get_socrata_data(token, source_url, output_file):
@@ -177,12 +180,35 @@ def increment_offset_and_record_data_until_empty():
         if next_page == None:
             continue
         
-        # write one json object per line (contains <$limit> records)
-        with open(getsocrata_options['output_file'], "a+") as f:
-            for each in next_page:
-                f.write(json.dumps(each) + os.linesep)
+        # write_socrata_page_to_file(getsocrata_options['output_file'], next_page)
+        store_socrata_page_in_global_list(next_page)
+
+    else:
+
+        ## Temporary location for pickle logic.
+        with open(getsocrata_options['output_file']+".pickle", "w+") as f:
+            pickle.dump(gl_total_list, f)
+        ## Temporary location for pickle logic.
 
 
+
+def write_socrata_page_to_file(output_file, socrata_page):
+    """ One of a selection of functions to store the retrieved data.
+
+    """
+
+    # write one json object per line (contains <$limit> records)
+    with open(output_file, "a+") as f:
+        for each in socrata_page:
+            f.write(json.dumps(each) + os.linesep)
+
+
+def store_socrata_page_in_global_list(socrata_page):
+    """ One of a selection of functions to store the retrieved data.
+
+    """
+
+    gl_total_list.extend(socrata_page)
 
 
 if __name__ == '__main__':
