@@ -13,7 +13,7 @@ getsocrata was written in Python 2 and will need some tweaks to be run in python
 
 1. Get the socrata json endpoint for your data. This is a URL (ex - http://data.sfgov.org/resource/7h4w-reyq.json)    
 2. Register with Socrata at https://opendata.socrata.com/login and get an app token. You'll use this to access your private rate limit. Basic steps: Create an account -> login to your account -> Edit account settings -> App Tokens -> Create new application -> Copy your App token    
-3. Move 'key.sh.auth.template' to 'key.sh.auth'. Add your app token as "<app token>".    
+3. Move 'token.sh.auth.template' to 'token.sh.auth'. Add your app token as "<app token>".    
 4. Modify sample.config to contain your  url(endpoint), and any filters or SoQL Queries (see the Socrata SODA API documentation).    
 5. Use requirements.txt to build an appropriate virtual environment: pip install -r requirements.txt    
 6. Run ./example.sh from bash.    
