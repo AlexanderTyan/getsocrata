@@ -294,6 +294,8 @@ if __name__ == '__main__':
 
     # Control logic for __main__:
     # This function passes functions which describe how to store the data.
-    increment_offset_and_record_data_until_empty(store_socrata_page_in_global_list, dump_listofdicts_to_pickle)
+    increment_offset_and_record_data_until_empty(write_socrata_page_to_file, pass_function)
+    #increment_offset_and_record_data_until_empty(store_socrata_page_in_global_list, dump_listofdicts_to_pickle)
+
     
 
