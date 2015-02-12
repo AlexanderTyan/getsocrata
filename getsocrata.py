@@ -9,13 +9,18 @@ This uses the deprecated authentication format with no callback URL. Socrata may
 discontinue this request type in the future in favor of a callback URL method.
 
 
+Review Notes 021115:
+    1. App should allow unauthenticated requests.
+    2. App should gracefully handle failed requests (It may already).
+    3. It would be good to move to the current SODA API version 2 (we are on V1 oauth).
+    4. App should support Python 3 too.
 
 """
 
 import json
 import requests
 import argparse
-import ConfigParser  # Exceptions are used, import the whole thing! Open question, will the SafeConfigParser function have access to the ConfigParser exceptions if we use the import format 'from ConfigParser import SafeConfigParser' ????
+import ConfigParser
 import sys
 import os
 import datetime
@@ -185,55 +190,11 @@ def increment_offset_and_record_data_until_empty(control_iterative_function, con
 
         control_ending_function(getsocrata_options['output_file'], next_page)
 
-
-
-def pass_function(*args):
-    """ Generic passing function
+def aggregate_arguments():
+    """ Get arguments from the command line & configuration file - return the configuration dict as getsocrata_options.
 
     """
 
-    pass
-
-
-def dump_listofdicts_to_pickle(output_file, socrata_page):
-    """ One of a selection of functions designed to finish storing data.
-
-    """
-
-    ## Temporary location for pickle logic.
-    with open(output_file+".pickle", "w+") as f:
-        pickle.dump(gl_total_list, f)
-    ## Temporary location for pickle logic.
-
-
-def write_socrata_page_to_file(output_file, socrata_page):
-    """ One of a selection of functions to store the retrieved data.
-
-    """
-
-    # write one json object per line (contains <$limit> records)
-    with open(output_file, "a+") as f:
-        for each in socrata_page:
-            f.write(json.dumps(each) + os.linesep)
-
-
-def store_socrata_page_in_global_list(output_file, socrata_page):
-    """ One of a selection of functions to store the retrieved data.
-
-    """
-
-    gl_total_list.extend(socrata_page)
-
-
-if __name__ == '__main__':
-    """Provide command line options for running this library from the command line.
-    
-    This module uses a config file parsed by SafeConfigParser. The config file can specify 
-    any variable used in argparse, but argparse will override SafeConfigParser. However, 
-    the config file MUST be passed as an argument in __main__ or it will not be used.
-
-    REQUIRED COMMAND LINE OPTIONS to run this library from the command line: url, token, config
-    """
 
     parser = argparse.ArgumentParser(description='Assign a target URL and an output project or filename.')
     parser.add_argument('--url', type=str, help='source URL')
@@ -291,6 +252,58 @@ if __name__ == '__main__':
         else:
             getsocrata_options['output_file'] = generate_filename() # use default value
 
+    return getsocrata_options
+
+
+def pass_function(*args):
+    """ Generic passing function
+
+    """
+
+    pass
+
+
+def dump_listofdicts_to_pickle(output_file, socrata_page):
+    """ One of a selection of functions designed to finish storing data.
+
+    """
+
+    ## Temporary location for pickle logic.
+    with open(output_file+".pickle", "w+") as f:
+        pickle.dump(gl_total_list, f)
+    ## Temporary location for pickle logic.
+
+
+def write_socrata_page_to_file(output_file, socrata_page):
+    """ One of a selection of functions to store the retrieved data.
+
+    """
+
+    # write one json object per line (contains <$limit> records)
+    with open(output_file, "a+") as f:
+        for each in socrata_page:
+            f.write(json.dumps(each) + os.linesep)
+
+
+def store_socrata_page_in_global_list(output_file, socrata_page):
+    """ One of a selection of functions to store the retrieved data.
+
+    """
+
+    gl_total_list.extend(socrata_page)
+
+
+if __name__ == '__main__':
+    """Provide command line options for running this library from the command line.
+    
+    This module uses a config file parsed by SafeConfigParser. The config file can specify 
+    any variable used in argparse, but argparse will override SafeConfigParser. However, 
+    the config file MUST be passed as an argument in __main__ or it will not be used.
+
+    REQUIRED COMMAND LINE OPTIONS to run this library from the command line: url, token, config
+    """
+
+    getsocrata_options = aggregate_arguments()
 
     # Control logic for __main__:
     # This function passes functions which describe how to store the data.
